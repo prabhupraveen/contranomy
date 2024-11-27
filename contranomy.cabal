@@ -46,6 +46,11 @@ common common-options
   ghc-options:
     -Wall -Wcompat
 
+    -- Packages to support clash
+    -package ghc-typelits-extra
+    -package ghc-typelits-natnormalise
+    -package ghc-typelits-knownnat
+
     -- Plugins to support type-level constraint solving on naturals
     -fplugin GHC.TypeLits.Extra.Solver
     -fplugin GHC.TypeLits.Normalise
@@ -58,13 +63,23 @@ common common-options
     -- blackboxes attached for them. You can disable this, but be sure to add
     -- a no-specialize pragma to every function with a blackbox.
     -fno-worker-wrapper
+
+    -- Strict annotations - while sometimes preventing space leaks - trigger
+    -- optimizations Clash can't deal with. See:
+    --
+    --    https://github.com/clash-lang/clash-compiler/issues/2361
+    --
+    -- These flags disables these optimizations. Note that the fields will
+    -- remain strict.
+    -fno-unbox-small-strict-fields
+    -fno-unbox-strict-fields
   default-language: Haskell2010
   build-depends:
     base,
     Cabal,
 
     -- clash-prelude will set suitable version bounds for the plugins
-    clash-prelude >= 1.2.3 && < 1.4,
+    clash-prelude >= 1.8.1 && < 1.10,
     ghc-typelits-natnormalise,
     ghc-typelits-extra,
     ghc-typelits-knownnat,
